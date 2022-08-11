@@ -1,0 +1,27 @@
+<script type="text/javascript">
+  function registerSSE() {
+    const channelId = document.getElementById('channel').value;
+    console.log(channelId);
+    const eventSource = new EventSource('/api/sse?channelId=' + channelId);
+    eventSource.onmessage = ({ data }) => {
+      const message = document.createElement('li');
+      message.innerText = 'New message: ' + data;
+      document.body.appendChild(message);
+    }
+  }
+
+  function sendData() {
+    const channelId = document.getElementById('channel').value;
+    const message = document.getElementById('message').value;
+    fetch('/api/message?channelId=' + channelId, {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+</script>
+<input type="text" id="channel" value="" aria-label="channel id"></input><button onclick="registerSSE()">subscribe</button>
+<br />
+<input type="text" id="message" value="" aria-label="message"></input><button onclick="sendData()">send</button>
